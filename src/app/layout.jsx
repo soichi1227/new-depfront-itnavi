@@ -1,6 +1,12 @@
 import localFont from "next/font/local";
 import "./globals.css";
+import { Noto_Sans_JP } from 'next/font/google'
 import Link from 'next/link';
+
+const notoSansJP = Noto_Sans_JP({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+})
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -20,9 +26,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    <html lang="ja">
+      <body className={notoSansJP.className}>
           <nav>
             <Link href="/">日程調整に戻る</Link>
           </nav>
