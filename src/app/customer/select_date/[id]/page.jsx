@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 const SelectDatePage = ({ params }) => {
-  console.log(params)
   const router = useRouter();
   const { id: dealId } = params;
   const [candidateDates, setCandidateDates] = useState([]);
@@ -15,6 +14,9 @@ const SelectDatePage = ({ params }) => {
   const [industry, setIndustry] = useState("");
   const [revenue, setRevenue] = useState("");
 
+  // Base URL from environment variables
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+
   useEffect(() => {
     if (!dealId) {
       setError("Invalid deal ID");
@@ -23,19 +25,14 @@ const SelectDatePage = ({ params }) => {
 
     const fetchCandidateData = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5000/customer/select_date/${dealId}`
-        );
+        const response = await fetch(`${API_BASE_URL}/customer/select_date/${dealId}`);
         if (!response.ok) throw new Error("データ取得に失敗しました");
 
         const data = await response.json();
-        console.log(data);
         const industry = data.industry;
-        //デバック用
-        //console.log(industry);
         const revenue = data.revenue;
-        //console.log(revenue);
         const formattedDates = data.candidates.map((candidate) => candidate.start);
+
         setCandidateDates(formattedDates);
         setDuration(data.duration);
         setIndustry(industry);
@@ -47,7 +44,7 @@ const SelectDatePage = ({ params }) => {
     };
 
     fetchCandidateData();
-  }, [dealId]);
+  }, [dealId, API_BASE_URL]);
 
   const handleCheckboxChange = (index) => {
     setSelectedIndex(index);
@@ -60,7 +57,7 @@ const SelectDatePage = ({ params }) => {
       const selectedDate = candidateDates[selectedIndex];
 
       try {
-        const response = await fetch("http://localhost:5000/customer/confirm_date", {
+        const response = await fetch(`${API_BASE_URL}/customer/confirm_date`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -73,8 +70,6 @@ const SelectDatePage = ({ params }) => {
 
         const result = await response.json();
         console.log(result.message);
-        //const industry = industry;
-        console.log(industry);
 
         // 確定後、別画面に遷移
         router.push(`/question?industry=${industry}&revenue=${encodeURIComponent(revenue)}`);
