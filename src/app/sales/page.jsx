@@ -8,9 +8,12 @@ const SalesManagement = () => {
   const [selectedDeal, setSelectedDeal] = useState(null);
   const router = useRouter();
 
+  // Base URL from environment variables
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+
   const fetchDeals = async () => {
     try {
-      const response = await fetch("http://localhost:5000/admin/manage_deals"); // API URLを指定
+      const response = await fetch(`${API_BASE_URL}/admin/manage_deals`); // API URLを指定
       const data = await response.json();
       setDeals(data);
     } catch (error) {
@@ -20,7 +23,7 @@ const SalesManagement = () => {
 
   useEffect(() => {
     fetchDeals();
-  }, []);
+  }, [API_BASE_URL]);
 
   const handleGeneratePreparation = () => {
     if (!selectedDeal) {
