@@ -14,12 +14,15 @@ const ITTripNavigator = () => {
   const [selectedCount, setSelectedCount] = useState(0);
   const [priorities, setPriorities] = useState({});
 
+  // Base URL from environment variables
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+
   // Flask APIから設問データを取得
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5000/api/survey_items?industry=${encodeURIComponent(
+          `${API_BASE_URL}/api/survey_items?industry=${encodeURIComponent(
             industry
           )}&revenue=${encodeURIComponent(revenue)}`
         );
@@ -33,7 +36,7 @@ const ITTripNavigator = () => {
     };
 
     fetchQuestions();
-  }, [industry, revenue]);
+  }, [industry, revenue, API_BASE_URL]);
 
   const handleCheckboxChange = (event, index) => {
     const isChecked = event.target.checked;
@@ -92,7 +95,7 @@ const ITTripNavigator = () => {
                   type="checkbox"
                   onChange={(event) => handleCheckboxChange(event, index)}
                 />
-                {item.question}{" "}
+                {item.question} {" "}
                 {priorities[index] ? `(優先度: ${priorities[index]})` : ""}
               </label>
             </div>
