@@ -108,4 +108,3 @@ const ITTripNavigator = () => {
 };
 
 export default ITTripNavigator;
-	
