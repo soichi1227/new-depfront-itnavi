@@ -84,30 +84,95 @@ const ITTripNavigator = () => {
   };
 
   return (
-    <div style={{ padding: "20px", backgroundColor: "#f9f9f9" }}>
-      <h1>IT Trip Navigator</h1>
-      <form>
-        {questions.length > 0 ? (
-          questions.map((item, index) => (
-            <div key={item.id} style={{ marginBottom: "10px" }}>
-              <label>
-                <input
-                  type="checkbox"
-                  onChange={(event) => handleCheckboxChange(event, index)}
-                />
-                {item.question} {" "}
-                {priorities[index] ? `(優先度: ${priorities[index]})` : ""}
-              </label>
-            </div>
-          ))
-        ) : (
-          <p>設問を読み込み中...</p>
-        )}
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex flex-col">
+      <header className="border-b bg-white shadow-sm">
+        <div className="max-w-5xl mx-auto px-4 py-4">
+          <Link href="/" className="inline-block">
+            <span className="text-2xl font-bold">
+              <span className="text-[#1BB0E7]">IT </span>
+              <span className="text-gray-700">Trip </span>
+              <span className="text-[#1BB0E7]">Navigator</span>
+            </span>
+          </Link>
+        </div>
+      </header>
 
-        <button onClick={navigateToNextPage}>次へ</button>
-      </form>
+      <main className="flex-grow max-w-4xl mx-auto px-4 py-12 relative">
+        <h1 className="text-2xl font-bold text-center mb-8 text-gray-800">商談前アンケート</h1>
+          
+        <p className="text-center mb-12 text-gray-600">
+          商談の場で、貴社にとって有益な情報をお伝えさせてください
+        </p>
+
+        {isLoading ? (
+          <p className="text-center">設問を読み込み中...</p>
+        ) : error ? (
+          <p className="text-center text-red-500">{error}</p>
+        ) : (
+          <div className="space-y-8">
+            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
+              <h2 className="text-lg font-semibold mb-2 text-gray-800">
+                Q. 現在取り組んでいる、または、1年以内に解決したいIT課題はなんですか？
+              </h2>
+              <p className="text-gray-600">
+                優先度の高い課題から順に最大3つ選択ください。
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {questions.map((item) => (
+                <label key={item.id} className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-150 ease-in-out cursor-pointer">
+                  <Checkbox 
+                    checked={selectedItems.includes(item.id)}
+                    onCheckedChange={(checked) => handleCheckboxChange(item.id, checked)}
+                    disabled={!selectedItems.includes(item.id) && selectedItems.length >= 3}
+                    className="mt-0.5"
+                  />
+                  <div className="flex-1">
+                    <span className="flex items-center">
+                      <span className="text-gray-700">{item.question}</span>
+                      {priorities[item.id] && (
+                        <span className="priority-badge ml-2 px-3 py-1 bg-blue-500 text-white text-xs font-semibold rounded-full shadow-sm">
+                          優先度 {priorities[item.id]}
+                        </span>
+                      )}
+                    </span>
+                  </div>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
+      </main>
+
+      <footer className="mt-8 pb-8 px-4">
+        <div className="max-w-4xl mx-auto flex flex-col items-center space-y-4">
+          <Button 
+            className="px-8 py-2 bg-[#1BB0E7] hover:bg-[#1690c0] transition-colors duration-150 ease-in-out"
+            onClick={navigateToNextPage}
+            disabled={selectedItems.length === 0}
+          >
+            次へ
+          </Button>
+          <Link 
+            href="/consultation/select" 
+            className="text-gray-600 hover:text-gray-800 text-sm underline"
+          >
+            商談日時選択に戻る
+          </Link>
+        </div>
+      </footer>
+
+      <style jsx>{`
+        .priority-badge {
+          transition: all 0.3s ease;
+        }
+        .priority-badge:hover {
+          transform: scale(1.05);
+        }
+      `}</style>
     </div>
-  );
-};
+  )
+}
 
 export default ITTripNavigator;
